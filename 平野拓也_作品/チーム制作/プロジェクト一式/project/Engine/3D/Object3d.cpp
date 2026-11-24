@@ -1,0 +1,131 @@
+#include"Object3d.h"
+#include "Object3dCommon.h"
+#include <cassert>
+#include "TextureManager.h"
+#include "Model.h"
+#include "ModelManager.h"
+
+void Object3d::Initialize(ObJect3dCommon* object3dCommon)
+{
+	// 引数で受け取ってメンバ変数に記録する
+	this->object3dCommon = object3dCommon;
+
+	// 座標変換行列リソースを作る
+	transformationMatrixResource = object3dCommon->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	// データを書き込む
+	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
+	// 単位行列を書き込んでおく
+	transformationMatrixData->WVP = MakeIdentity4x4();
+	transformationMatrixData->World = MakeIdentity4x4();
+
+	// 平行光源用のリソースを作る
+	directionalLightResource = object3dCommon->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
+	DirectionalLight light{ {1.0f,1.0f,1.0f,1.0f},{0.0f,-1.0f,0.0f},1.0f };
+	directionalLightData->color = light.color;
+	directionalLightData->direction = light.direction;
+	directionalLightData->intensity = light.intensity;
+
+	// インスタンス用マテリアルリソースを作成
+	materialResource = object3dCommon->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
+	// デフォルトのマテリアル値
+	Vector4 defaultColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+	materialData->color = defaultColor;
+	materialData->enableLighting = false;
+	materialData->uvTransform = MakeIdentity4x4();
+
+	// Transform変数を作る
+	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	this->camera = object3dCommon->GetDefaultCamera();
+
+}
+
+void Object3d::Updata()
+{
+	//transform.rotate.y += 0.05f;
+
+	// 3DのTransform処理
+	worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+
+	if (camera) {
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+	}
+	else {
+		worldViewProjectionMatrix = worldMatrix;
+	}
+
+	transformationMatrixData->WVP = worldViewProjectionMatrix;
+	transformationMatrixData->World = worldMatrix;
+
+}
+
+void Object3d::Draw()
+{
+	// 座標変換行列CBufferの場所を設定
+	object3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	// 平行光源CBufferの場所を設定
+	object3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+
+	// インスタンス毎マテリアルをルート 0 にセット（これで個別色制御）
+	if (materialResource) {
+		object3dCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	}
+
+	// 1フレームに1回だけ WVP / transform をログ出力して状況を確認（開発用）
+	static int frameCounter = 0;
+	static bool loggedOnce = false;
+	++frameCounter;
+	if (!loggedOnce && (++frameCounter % 60) == 0) {
+		char buf[512];
+		const Camera* cam = object3dCommon->GetDefaultCamera();
+		if (cam) {
+			const Matrix4x4& vm = cam->GetViewMatrix();
+			const Matrix4x4& pm = cam->GetProjectionMatrix();
+			sprintf_s(buf, "Object3d::Draw: camera view[0][0]=%f proj[0][0]=%f\n", vm.m[0][0], pm.m[0][0]);
+			OutputDebugStringA(buf);
+		}
+		sprintf_s(buf, "Object3d::Draw: transform.translate=(%f,%f,%f) scale=(%f,%f,%f) model=%p\n",
+			transform.translate.x, transform.translate.y, transform.translate.z,
+			transform.scale.x, transform.scale.y, transform.scale.z,
+			static_cast<void*>(model));
+		OutputDebugStringA(buf);
+		loggedOnce = true;
+	}
+
+	// 3Dモデルが割り当てられていれば描画する
+	if (model) {
+		model->Draw();
+	}
+}
+
+void Object3d::SetModel(const std::string& filePath)
+{
+    // モデルを検索してセットする
+    model = ModelManager::GetInstance()->FindModel(filePath);
+
+    // デバッグログ: モデルが見つかったか、ポインタとファイル名を出力
+    char buf[256];
+    if (model) {
+        sprintf_s(buf, "Object3d::SetModel: model FOUND for '%s' ptr=%p\n", filePath.c_str(), static_cast<void*>(model));
+    } else {
+        sprintf_s(buf, "Object3d::SetModel: model NOT FOUND for '%s'\n", filePath.c_str());
+    }
+    OutputDebugStringA(buf);
+
+    // もしモデル側がテクスチャ情報を持っているならそのまま利用して描画（SRV は model->Draw() が設定する）
+}
+
+void Object3d::SetDiffuseColor(const Vector4& color)
+{
+	// ライト用色（インスタンスライト CBuffer）
+	if (directionalLightData) {
+		directionalLightData->color = color;
+	}
+	// インスタンスマテリアルの色を更新
+	if (materialData) {
+		materialData->color = color;
+	}
+}

@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <FxCompile Include="resources\shaders\Object3d.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Object3d.VS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application\Enemy.cpp" />
+    <ClCompile Include="Application\EnemyBullet.cpp" />
+    <ClCompile Include="Engine\3D\Camera.cpp" />
+    <ClCompile Include="Engine\Base\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="Engine\Base\DirectXCommon.cpp" />
+    <ClCompile Include="externals\imgui\imgui.cpp" />
+    <ClCompile Include="externals\imgui\imgui_demo.cpp" />
+    <ClCompile Include="externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="externals\imgui\imgui_tables.cpp" />
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Engine\Base\Input.cpp" />
+    <ClCompile Include="Engine\Base\Logger.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Engine\3D\Model.cpp" />
+    <ClCompile Include="Engine\3D\ModelCommon.cpp" />
+    <ClCompile Include="Engine\3D\ModelManager.cpp" />
+    <ClCompile Include="Engine\Math\MyMath.cpp" />
+    <ClCompile Include="Engine\3D\Object3d.cpp" />
+    <ClCompile Include="Engine\3D\Object3dCommon.cpp" />
+    <ClCompile Include="Engine\2D\Sprite.cpp" />
+    <ClCompile Include="Engine\2D\SpriteCommon.cpp" />
+    <ClCompile Include="Engine\Base\StringUility.cpp" />
+    <ClCompile Include="Engine\Base\TextureManager.cpp" />
+    <ClCompile Include="Engine\Base\WinApp.cpp" />
+    <ClCompile Include="Application\Player.cpp" />
+    <ClCompile Include="Engine\Math\MatuilityForText.cpp" />
+    <ClCompile Include="Application\PlayerBullet.cpp" />
+    <ClCompile Include="Engine\3D\Particle.cpp" />
+    <ClCompile Include="Engine\3D\ParticleManager.cpp" />
+    <ClCompile Include="Application\RailCamera.cpp" />
+    <ClCompile Include="Application\FramWork\MyGame.cpp" />
+    <ClCompile Include="Application\FramWork\Framework.cpp" />
+    <ClCompile Include="Application\Fade.cpp" />
+    <ClCompile Include="Engine\Base\InputGamepad.cpp" />
+    <ClCompile Include="Application\Poose.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application\Enemy.h" />
+    <ClInclude Include="Application\EnemyBullet.h" />
+    <ClInclude Include="Engine\3D\Camera.h" />
+    <ClInclude Include="Engine\Base\D3DResourceLeakChecker.h" />
+    <ClInclude Include="Engine\Base\DirectXCommon.h" />
+    <ClInclude Include="externals\imgui\imconfig.h" />
+    <ClInclude Include="externals\imgui\imgui.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="externals\imgui\imgui_internal.h" />
+    <ClInclude Include="externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="Engine\Base\Input.h" />
+    <ClInclude Include="Engine\Base\Logger.h" />
+    <ClInclude Include="Engine\3D\Model.h" />
+    <ClInclude Include="Engine\3D\ModelCommon.h" />
+    <ClInclude Include="Engine\3D\ModelManager.h" />
+    <ClInclude Include="Engine\Math\MyMath.h" />
+    <ClInclude Include="Engine\3D\Object3d.h" />
+    <ClInclude Include="Engine\3D\Object3dCommon.h" />
+    <ClInclude Include="Engine\2D\Sprite.h" />
+    <ClInclude Include="Engine\2D\SpriteCommon.h" />
+    <ClInclude Include="Engine\Base\StringUility.h" />
+    <ClInclude Include="Engine\Base\TextureManager.h" />
+    <ClInclude Include="Engine\Base\WinApp.h" />
+    <ClInclude Include="Application\Player.h" />
+    <ClInclude Include="Engine\Math\MatuilityForText.h" />
+    <ClInclude Include="Application\PlayerBullet.h" />
+    <ClInclude Include="Engine\Math\Matrix3x3.h" />
+    <ClInclude Include="Engine\Math\Matrix4x4.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="Engine\3D\Particle.h" />
+    <ClInclude Include="Engine\3D\ParticleManager.h" />
+    <ClInclude Include="Application\RailCamera.h" />
+    <ClInclude Include="Application\FramWork\MyGame.h" />
+    <ClInclude Include="Application\FramWork\Framework.h" />
+    <ClInclude Include="Application\Fade.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Application\Poose.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\shaders\Object3d.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CG2_setting.rc" />
+  </ItemGroup>
+</Project>
